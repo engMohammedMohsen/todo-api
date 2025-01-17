@@ -1,5 +1,6 @@
 const asyncWrapper = require("../middlewares/asyncWrapper");
 const User = require("../models/user.model");
+const Todo = require("../models/todo.model");
 const httpStatusText = require("../utils/httpStatusText");
 const appError = require("../utils/appError");
 const bcrypt = require("bcryptjs");
@@ -7,6 +8,7 @@ const generateJWT = require("../utils/generateJWT");
 const userRoles = require("../utils/userRoles");
 const fs = require("node:fs");
 const path = require("node:path");
+
 /*********************************************************/
 
 const getUser = asyncWrapper(async (req, res, next) => {
@@ -94,8 +96,16 @@ const login = asyncWrapper(async (req, res, next) => {
   const role = user.role;
   if (user && matchedPassword) {
     const token = await generateJWT({ email: user.email, id: user._id, role });
-
-    return res.json({ status: httpStatusText.SUCCESS, data: { token } });
+    const todos = await Todo.find(
+      { user: user._id },
+      {
+        __v: false,
+        user: false,
+      }
+    )
+      .sort({ updatedAt: -1 })
+      .limit(10);
+    return res.json({ status: httpStatusText.SUCCESS, data: { token, todos } });
   } else {
     const error = appError.create(
       "invalid password",
