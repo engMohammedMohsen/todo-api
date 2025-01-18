@@ -1,6 +1,6 @@
 const { body } = require("express-validator");
 
-const validationAddTodo = () => {
+const todoValidator = () => {
   return [
     body("title")
       .notEmpty()
@@ -13,5 +13,5 @@ const validationAddTodo = () => {
   ];
 };
 module.exports = {
-  validationAddTodo,
+  todoValidator,
 };
