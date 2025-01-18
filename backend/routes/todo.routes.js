@@ -7,7 +7,7 @@ const {
 } = require("../controllers/todo.controller");
 
 const validationExecution = require("../middlewares/validationExecution");
-const { todoValidator } = require("../utils/validator/addTodoValidator");
+const { todoValidator } = require("../utils/validator/todoValidator");
 const router = express.Router();
 
 router
