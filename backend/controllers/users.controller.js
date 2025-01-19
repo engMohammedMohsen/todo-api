@@ -132,7 +132,7 @@ const login = asyncWrapper(async (req, res, next) => {
 const editUser = asyncWrapper(async (req, res, next) => {
   const userId = req.currentUser.id;
   const { body } = req;
-  const newAvatar = req.file?.path;
+  const newAvatar = req.file.path;
   const oldAvatar = (await User.findById(userId)).avatar;
   try {
     if (oldAvatar && newAvatar && fs.existsSync(oldAvatar)) {
@@ -140,7 +140,9 @@ const editUser = asyncWrapper(async (req, res, next) => {
       fs.unlinkSync(path.join(oldAvatar));
       console.log("deleted Done");
     }
-  } catch (err) {}
+  } catch (err) {
+    console.log(err);
+  }
   const avatar = newAvatar || oldAvatar;
   const user = await User.findByIdAndUpdate(
     userId,
