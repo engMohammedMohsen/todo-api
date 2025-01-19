@@ -4,9 +4,6 @@ const User = require("../models/user.model");
 const httpStatusText = require("../utils/httpStatusText");
 const appError = require("../utils/appError");
 const userRoles = require("../utils/userRoles");
-const { validationResult } = require("express-validator");
-const path = require("node:path");
-const fs = require("node:fs");
 
 const getTodo = asyncWrapper(async (req, res, next) => {
   const { todoId } = req.params;

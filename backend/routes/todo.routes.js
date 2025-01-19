@@ -8,6 +8,10 @@ const {
 
 const validationExecution = require("../middlewares/validationExecution");
 const { todoValidator } = require("../utils/validator/todoValidator");
+const {
+  getRecentTodo,
+  addRecentTodo,
+} = require("../controllers/recentTodo.controller");
 const router = express.Router();
 
 router
@@ -15,6 +19,8 @@ router
   .get(getTodo)
   .post(todoValidator(), validationExecution, addTodo);
 
+router.route("/recent").get(getRecentTodo).patch(addRecentTodo);
+router.route("/recent/:todoId").patch(addRecentTodo);
 router
   .route("/:todoId")
   .get(getTodo)

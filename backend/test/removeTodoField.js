@@ -1,7 +1,9 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const User = require("../models/user.model");
-
+mongoose.connect(process.env.MONGO_URL).then(() => {
+  console.log("mongodb server started...");
+});
 const removeTodoField = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URL).then(() => {
