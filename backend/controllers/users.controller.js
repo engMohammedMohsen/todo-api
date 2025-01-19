@@ -105,7 +105,20 @@ const login = asyncWrapper(async (req, res, next) => {
     )
       .sort({ updatedAt: -1 })
       .limit(10);
-    return res.json({ status: httpStatusText.SUCCESS, data: { token, todos } });
+    return res.json({
+      status: httpStatusText.SUCCESS,
+      data: {
+        token,
+        todos,
+        user: {
+          firstName: user.firstName,
+          lastName: user.firstName,
+          fullName: user.fullName,
+          mobile: user.mobile,
+          avatar: user.avatar,
+        },
+      },
+    });
   } else {
     const error = appError.create(
       "invalid password",
@@ -119,12 +132,12 @@ const login = asyncWrapper(async (req, res, next) => {
 const editUser = asyncWrapper(async (req, res, next) => {
   const userId = req.currentUser.id;
   const { body } = req;
-  const newAvatar = req.file?.filename ? "users/" + req.file.filename : null;
+  const newAvatar = req.file?.path;
   const oldAvatar = (await User.findById(userId)).avatar;
   try {
-    if (oldAvatar && fs.existsSync("public", oldAvatar)) {
+    if (oldAvatar && newAvatar && fs.existsSync(oldAvatar)) {
       console.log("deleted...");
-      fs.unlinkSync(path.join("public", oldAvatar));
+      fs.unlinkSync(path.join(oldAvatar));
       console.log("deleted Done");
     }
   } catch (err) {}
