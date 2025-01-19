@@ -26,7 +26,7 @@ const getTodo = asyncWrapper(async (req, res, next) => {
     __v: false,
     user: false,
   })
-    .sort({ updatedAt: -1 })
+    .sort({ createdAt: -1 })
     .limit(limit)
     .skip(skip);
   if (todo) {
