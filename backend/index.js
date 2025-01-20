@@ -14,9 +14,17 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
 const app = express();
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(cors());
+const buildPath = path.normalize(
+  path.join(__dirname, "../frontend/todoUi/dist")
+);
+app.use(express.static(buildPath));
 app.use(express.json());
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/todos", verifyToken, todosRouter);
+
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "../frontend/todoUi", "index.html"));
+// });
 
 app.all("*", (req, res, next) => {
   return res.status(404).json({

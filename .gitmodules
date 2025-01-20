@@ -1,6 +1,0 @@
-[submodule "backend/frontend"]
-	path = backend/frontend
-	url = https://github.com/EngAbdElRahmanAzzam/full-stack-TODO.git
-[submodule "frontend"]
-	path = frontend
-	url = https://github.com/EngAbdElRahmanAzzam/full-stack-TODO.git
