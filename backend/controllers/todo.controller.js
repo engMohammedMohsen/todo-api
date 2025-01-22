@@ -8,9 +8,30 @@ const userRoles = require("../utils/userRoles");
 const getTodo = asyncWrapper(async (req, res, next) => {
   const { todoId } = req.params;
   const query = req.query;
-  const limit = query.limit || 10;
+  const limit = query.limit;
   const page = query.page || 1;
   const skip = (page - 1) * limit;
+  const order = query.order || -1;
+  let sort = query.sort || "add";
+  const days = query.days;
+  const time = new Date(); // Current date and time
+  time.setDate(time.getDate() - days); // Subtract n days
+  time.setHours(0, 0, 0, 0); // Set time to 00:00:00
+  switch (sort) {
+    case "add":
+      sort = "createdAt";
+      break;
+    case "update":
+      sort = "updatedAt";
+      break;
+    case "access":
+      sort = "accessedAt";
+      break;
+    default:
+      sort = "createdAt";
+      break;
+  }
+
   const userId = req.currentUser.id;
   const user = await User.findById(userId);
   if (!user) {
@@ -21,12 +42,14 @@ const getTodo = asyncWrapper(async (req, res, next) => {
     );
     return next(error);
   }
+  const filter = { user: userId };
 
-  const todo = await Todo.find(todoId ? { _id: todoId } : { user: userId }, {
+  filter[sort] = { $gte: days ? time : 0 };
+  const todo = await Todo.find(todoId ? { _id: todoId } : filter, {
     __v: false,
     user: false,
   })
-    .sort({ createdAt: -1 })
+    .sort({ sort: order })
     .limit(limit)
     .skip(skip);
   if (todo) {
@@ -91,7 +114,11 @@ const deleteTodo = asyncWrapper(async (req, res, next) => {
     );
     return next(error);
   }
-  await Todo.deleteOne({ _id: todoId });
+  if (todoId) {
+    await Todo.deleteOne({ _id: todoId });
+  } else {
+    await Todo.deleteMany({ user: userId });
+  }
   return res.status(200).json({ status: httpStatusText.SUCCESS, data: null });
 });
 

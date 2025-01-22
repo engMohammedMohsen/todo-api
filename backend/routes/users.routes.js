@@ -9,6 +9,7 @@ const {
   getUser,
   editUser,
   changePassword,
+  deleteUser,
 } = require("../controllers/users.controller");
 const validationExecution = require("../middlewares/validationExecution");
 const { validationUserSchema } = require("../validator/userValidator");
@@ -46,6 +47,12 @@ const upload = multer({
 });
 
 router
+  .route("/:userId?")
+  .delete(verifyToken, deleteUser)
+  .get(verifyToken, getUser)
+  .patch(verifyToken, upload.single("avatar"), editUser);
+
+router
   .route("/sign-up")
   .post(validationUserSchema(), validationExecution, register);
 router.route("/sign-in").post(login);
@@ -57,11 +64,5 @@ router
     validationExecution,
     changePassword
   );
-
-router
-  .route("/")
-  .get(verifyToken, getUser)
-  .patch(verifyToken, upload.single("avatar"), editUser);
-router.route("/:userId").get(verifyToken, getUser);
 
 module.exports = router;

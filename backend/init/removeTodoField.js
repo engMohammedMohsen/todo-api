@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: __dirname + "\\..\\.env" });
 const mongoose = require("mongoose");
 const User = require("../models/user.model");
 mongoose.connect(process.env.MONGO_URL).then(() => {
@@ -6,12 +6,8 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
 });
 const removeTodoField = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URL).then(() => {
-      console.log("Connected to MongoDB...");
-    });
-
-    await User.updateMany({}, { $unset: { todo: "" } }).then(() =>
-      console.log("Removed 'todo' field from all users")
+    await User.updateMany({}, { $unset: { todo: "" } }, { strict: false }).then(
+      () => console.log("Removed 'todo' field from all users")
     );
     await mongoose.connection.close();
   } catch (error) {

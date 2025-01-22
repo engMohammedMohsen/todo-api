@@ -96,20 +96,10 @@ const login = asyncWrapper(async (req, res, next) => {
   const role = user.role;
   if (user && matchedPassword) {
     const token = await generateJWT({ email: user.email, id: user._id, role });
-    const todos = await Todo.find(
-      { user: user._id },
-      {
-        __v: false,
-        user: false,
-      }
-    )
-      .sort({ accessedAt: -1 })
-      .limit(10);
     return res.json({
       status: httpStatusText.SUCCESS,
       data: {
         token,
-        todos,
         user: {
           firstName: user.firstName,
           lastName: user.firstName,
@@ -132,6 +122,9 @@ const login = asyncWrapper(async (req, res, next) => {
 const editUser = asyncWrapper(async (req, res, next) => {
   const userId = req.currentUser.id;
   const { body } = req;
+  if (body.password) {
+    return appError.create("change password not valid");
+  }
   const newAvatar = req.file?.path;
   const oldAvatar = (await User.findById(userId)).avatar;
   try {
@@ -169,10 +162,22 @@ const changePassword = asyncWrapper(async (req, res, next) => {
   res.status(200).json({ status: "Success", data: { user } });
 });
 
+const deleteUser = asyncWrapper(async (req, res, next) => {
+  const userId = req.currentUser.id;
+  if (userId) {
+    await Todo.deleteMany({ user: userId });
+    await User.deleteOne({ _id: userId });
+    return res.status(200).json({ status: "Success", data: null });
+  } else {
+    next(appError.create("invalid user id", 500, httpStatusText.FAIL));
+  }
+});
+
 module.exports = {
   getUser,
   register,
   login,
   editUser,
   changePassword,
+  deleteUser,
 };
