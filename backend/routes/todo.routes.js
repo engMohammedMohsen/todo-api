@@ -8,6 +8,7 @@ const {
 
 const validationExecution = require("../middlewares/validationExecution");
 const { todoValidator } = require("../validator/todoValidator");
+const { todoValidatorUpdate } = require("../validator/todoValidatorUpdate");
 const {
   getRecentTodo,
   addRecentTodo,
@@ -24,7 +25,7 @@ router.route("/recent/:todoId").patch(addRecentTodo);
 router
   .route("/:todoId")
   .get(getTodo)
-  .patch(todoValidator(), validationExecution, editTodo)
+  .patch(todoValidatorUpdate(), validationExecution, editTodo)
   .delete(deleteTodo);
 
 module.exports = router;
