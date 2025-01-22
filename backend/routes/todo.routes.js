@@ -7,7 +7,7 @@ const {
 } = require("../controllers/todo.controller");
 
 const validationExecution = require("../middlewares/validationExecution");
-const { todoValidator } = require("../utils/validator/todoValidator");
+const { todoValidator } = require("../validator/todoValidator");
 const {
   getRecentTodo,
   addRecentTodo,
@@ -19,7 +19,7 @@ router
   .get(getTodo)
   .post(todoValidator(), validationExecution, addTodo);
 
-router.route("/recent").get(getRecentTodo).patch(addRecentTodo);
+router.route("/recent").get(getRecentTodo);
 router.route("/recent/:todoId").patch(addRecentTodo);
 router
   .route("/:todoId")

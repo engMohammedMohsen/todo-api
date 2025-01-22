@@ -53,6 +53,7 @@ const addTodo = asyncWrapper(async (req, res, next) => {
     description,
     status,
     user: userId,
+    accessedAt: new Date(),
   });
 
   await newTodo.save();
@@ -66,7 +67,7 @@ const editTodo = asyncWrapper(async (req, res, next) => {
   const { todoId } = req.params;
   const todo = await Todo.findByIdAndUpdate(
     todoId,
-    { $set: req.body },
+    { $set: { ...req.body, accessedAt: new Date() } },
     { new: true }
   );
   if (todo) {

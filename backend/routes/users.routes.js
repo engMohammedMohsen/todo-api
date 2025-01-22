@@ -11,10 +11,10 @@ const {
   changePassword,
 } = require("../controllers/users.controller");
 const validationExecution = require("../middlewares/validationExecution");
-const { validationUserSchema } = require("../utils/validator/userValidator");
+const { validationUserSchema } = require("../validator/userValidator");
 const {
   validationUserChangePassword,
-} = require("../utils/validator/userValidatorChangePassword");
+} = require("../validator/userValidatorChangePassword");
 
 const diskStorage = multer.diskStorage({
   destination: function (req, file, cb) {
