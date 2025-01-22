@@ -103,7 +103,7 @@ const login = asyncWrapper(async (req, res, next) => {
         user: false,
       }
     )
-      .sort({ updatedAt: -1 })
+      .sort({ accessedAt: -1 })
       .limit(10);
     return res.json({
       status: httpStatusText.SUCCESS,
