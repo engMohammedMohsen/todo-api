@@ -101,6 +101,7 @@ const login = asyncWrapper(async (req, res, next) => {
       data: {
         token,
         user: {
+          _id: user._id,
           firstName: user.firstName,
           lastName: user.firstName,
           fullName: user.fullName,
@@ -164,7 +165,14 @@ const changePassword = asyncWrapper(async (req, res, next) => {
 
 const deleteUser = asyncWrapper(async (req, res, next) => {
   const userId = req.currentUser.id;
-  if (userId) {
+  const user = await User.findById(userId);
+  if (user) {
+    const avatar = user.avatar;
+    if (avatar && fs.existsSync(avatar)) {
+      console.log("deleted avatar...");
+      fs.unlinkSync(path.join(avatar));
+      console.log("deleted Done");
+    }
     await Todo.deleteMany({ user: userId });
     await User.deleteOne({ _id: userId });
     return res.status(200).json({ status: "Success", data: null });
