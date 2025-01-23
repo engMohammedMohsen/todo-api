@@ -53,7 +53,18 @@ const getTodo = asyncWrapper(async (req, res, next) => {
     .limit(limit)
     .skip(skip);
   if (todo) {
-    return res.json({ status: httpStatusText.SUCCESS, data: todo });
+    let tasks = 0,
+      complete = 0;
+    await todo.forEach((ele) => {
+      tasks++;
+      if (ele.status) {
+        complete++;
+      }
+    });
+    return res.json({
+      status: httpStatusText.SUCCESS,
+      data: { todos: todo, status: { tasks, complete } },
+    });
   }
   return next(appError.create("Not found trip", 404, httpStatusText.ERROR));
 });

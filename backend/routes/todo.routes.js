@@ -10,7 +10,6 @@ const validationExecution = require("../middlewares/validationExecution");
 const { todoValidator } = require("../validator/todoValidator");
 const { todoValidatorUpdate } = require("../validator/todoValidatorUpdate");
 const router = express.Router();
-
 router
   .route("/:todoId?")
   .post(todoValidator(), validationExecution, addTodo)
