@@ -105,6 +105,7 @@ const login = asyncWrapper(async (req, res, next) => {
           firstName: user.firstName,
           lastName: user.firstName,
           fullName: user.fullName,
+          email: user.email,
           mobile: user.mobile,
           avatar: user.avatar,
         },
