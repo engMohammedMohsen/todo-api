@@ -1,4 +1,5 @@
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const cors = require("cors");
 const httpStatusText = require("./utils/httpStatusText");
 const mongoose = require("mongoose");
@@ -7,18 +8,26 @@ const todosRouter = require("./routes/todo.routes");
 const path = require("node:path");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 const verifyToken = require("./middlewares/verifyToken");
+
+const limiter = rateLimit({
+  max: 200,
+  windowMs: 60 * 60 * 1000,
+  message: "Too many request from this IP",
+});
+
 mongoose.connect(process.env.MONGO_URL).then(() => {
   console.log("mongodb server started...");
 });
 
 const app = express();
+app.use(limiter);
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(cors());
 
-const buildPath = path.normalize(
-  path.join(__dirname, "../frontend/todoUi/dist")
-);
-app.use(express.static(buildPath));
+// const buildPath = path.normalize(
+//   path.join(__dirname, "../frontend/todoUi/dist")
+// );
+// app.use(express.static(buildPath));
 
 app.use(express.json());
 app.use("/api/v1/users", usersRouter);
